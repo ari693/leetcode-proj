@@ -124,23 +124,16 @@ def calc_docs_sorted_order(q_terms):
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key'
-# query = input('Enter your query: ')
-# q_terms = [term.lower() for term in query.strip().split()]
-
-# print(q_terms)
-# print(calc_docs_sorted_order(q_terms)[0])
-# print(len(calc_docs_sorted_order(q_terms)))
-
 
 class SearchForm(FlaskForm):
-    search = StringField('Enter your search term')
-    submit = SubmitField('Search')
+    search = StringField('Enter your search term', render_kw={"class": "search-box"})
+    submit = SubmitField('Search', render_kw={"class": "search-box-btn"})
 
 
 @app.route("/<query>")
 def return_links(query):
     q_terms = [term.lower() for term in query.strip().split()]
-    return jsonify(calc_docs_sorted_order(q_terms)[:20:])
+    return jsonify(calc_docs_sorted_order(q_terms))
 
 
 @app.route("/", methods=['GET', 'POST'])
@@ -150,5 +143,5 @@ def home():
     if form.validate_on_submit():
         query = form.search.data
         q_terms = [term.lower() for term in query.strip().split()]
-        results = calc_docs_sorted_order(q_terms)[:20:]
+        results = calc_docs_sorted_order(q_terms)
     return render_template('index.html', form=form, results=results)
